@@ -1,0 +1,2 @@
+[console_scripts]
+archtree = archtree.cli:main

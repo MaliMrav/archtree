@@ -1,2 +1,23 @@
-[tool.setuptools]
-package-dir = {"" = "src"}
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "archtree"
+version = "0.1.0"
+description = "A source tree viewer that presents software in architectural order, not filesystem order."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Vladimir Lekic"}
+]
+
+
+[project.scripts]
+archtree = "archtree.cli:main"
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
