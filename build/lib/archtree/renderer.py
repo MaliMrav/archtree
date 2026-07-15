@@ -11,14 +11,17 @@ PIPE = "│   "
 SPACE = "    "
 
 
-def render(node: Node) -> list[str]:
+def render(
+        node: Node,
+        label: str,
+) -> list[str]:
     """
     Render a tree using unicode branches.
     """
 
     lines: list[str] = []
 
-    lines.append(node.path.name)
+    lines.append(label)
 
     if node.children:
         lines.extend(

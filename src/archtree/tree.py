@@ -4,7 +4,10 @@ Filesystem traversal.
 
 from pathlib import Path
 
+from .sorting import sort_nodes
+
 from .models import Node
+from .architectures import determine_role
 from .roles import Role
 
 
@@ -14,8 +17,9 @@ def build_tree(path: Path) -> Node:
 
         children = [
             build_tree(child)
-            for child in sorted(path.iterdir())
+            for child in path.iterdir()
         ]
+        children = sort_nodes(children)
 
         return Node(
             path=path,
@@ -25,5 +29,5 @@ def build_tree(path: Path) -> Node:
 
     return Node(
         path=path,
-        role=Role.OTHER,
+        role=determine_role(path),
     )
