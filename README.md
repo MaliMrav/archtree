@@ -1,77 +1,52 @@
 # archtree
 
-Software is organised by architecture.
+Software is designed by architecture, not by alphabetical order.
 
-Most tree viewers display filesystems.
+Traditional tree viewers display filesystems.
 
-Those are not the same thing.
+**archtree** displays software architecture.
 
-**archtree** displays source trees in architectural order, helping you understand the public structure of a project before its implementation.
+It presents source trees in architectural order, helping developers understand the public structure of a project before its implementation.
 
 > **Architecture precedes implementation.**
 
 ---
 
-Display source trees in **architectural order** rather than filesystem order.
+## Why?
 
-Traditional tree viewers answer:
+Most tree viewers answer the question:
 
 > **"Where are my files?"**
 
-**archtree** answers:
+**archtree** answers a different question:
 
 > **"How is my software organised?"**
 
 Instead of displaying files alphabetically, **archtree** groups them according to their architectural role.
 
-```
+```text
 Public Interface
 Implementation
 Subcomponents
+Other Files
 ```
 
-The result is a directory tree that reflects how software is designed, not merely how it is stored.
-
----
-
-## Why?
-
-Most tree viewers sort files alphabetically.
-
-For many languages—particularly C and C++—this means implementation files (`.cpp`) often appear before their corresponding public interfaces (`.h`).
-
-For example:
-
-```text
-BootScreen.cpp
-BootScreen.h
-```
-
-Architecturally, however, the interface comes first.
-
-```text
-BootScreen.h
-BootScreen.cpp
-```
-
-When browsing a project, developers usually want to understand the public API before reading its implementation.
-
-**archtree** makes that architectural relationship explicit.
+The result is a directory tree that reflects how software is designed, rather than simply how it is stored.
 
 ---
 
 ## Philosophy
 
-Every directory represents a component.
+Every component should be understood from the outside in.
 
-Each component is presented in the following order:
+For each directory, **archtree** presents files in the following order:
 
 1. **Public Interface**
 2. **Implementation**
 3. **Subcomponents**
 4. **Other Files**
 
-This follows a simple principle:
+This encourages developers to understand a component's public contract before examining its implementation.
 
 > **Architecture precedes implementation.**
 
@@ -79,61 +54,109 @@ This follows a simple principle:
 
 ## Example
 
-Instead of this:
+Given a traditional filesystem layout:
 
 ```text
-screens
+screens/
 ├── BootScreen.cpp
 ├── BootScreen.h
 ├── CalibrationScreen.cpp
 ├── CalibrationScreen.h
-└── control
+├── ScreenConfig.h
+├── WeatherScreen.cpp
+├── WeatherScreen.h
+└── control/
+    ├── ControlPanelPage.h
+    ├── ControlPanelScreen.cpp
+    ├── ControlPanelScreen.h
+    ├── capabilities/
+    │   ├── ConnectivityPage.cpp
+    │   └── ConnectivityPage.h
+    └── information/
+        ├── AboutPage.cpp
+        ├── AboutPage.h
+        ├── SystemPage.cpp
+        └── SystemPage.h
 ```
 
-**archtree** produces:
+`archtree` renders:
 
 ```text
-screens
+../screens/
 ├── BootScreen.h
 ├── CalibrationScreen.h
+├── ScreenConfig.h
+├── WeatherScreen.h
 ├── BootScreen.cpp
 ├── CalibrationScreen.cpp
-└── control
+├── WeatherScreen.cpp
+└── control/
+    ├── ControlPanelPage.h
+    ├── ControlPanelScreen.h
+    ├── ControlPanelScreen.cpp
+    ├── capabilities/
+    │   ├── ConnectivityPage.h
+    │   └── ConnectivityPage.cpp
+    └── information/
+        ├── AboutPage.h
+        ├── SystemPage.h
+        ├── AboutPage.cpp
+        └── SystemPage.cpp
 ```
 
-The output naturally reads from interface to implementation.
+Notice that:
+
+- Public interfaces appear before implementations.
+- Components appear before their internal subcomponents.
+- Directories are distinguished with a trailing `/`.
+- The tree naturally reads from architecture to implementation.
 
 ---
 
-## Features
+## Current Status
 
-- Architecture-aware source tree display
-- Public interfaces shown before implementations
-- Components shown before subcomponents
-- Language-specific architecture definitions
-- Clean Unicode tree output
-- Extensible architecture model
-- Configurable project rules
+**Version:** 0.1.1
+
+Current capabilities include:
+
+- Unicode tree rendering
+- Architecture-aware sorting
+- C/C++ architectural layouts
+- Public interfaces before implementations
+- Components before subcomponents
+- Clean, readable terminal output
 
 ---
 
-## Planned Language Support
+## Architecture
 
-The architecture model is language-independent.
+`archtree` is intentionally built as a pipeline.
 
-Initial support is planned for:
+```text
+Filesystem
+    │
+    ▼
+Tree Construction
+    │
+    ▼
+Architectural Classification
+    │
+    ▼
+Sorting
+    │
+    ▼
+Rendering
+```
 
-- C
-- C++
-- Python
-- Go
-- Rust
+Each stage has a single responsibility.
 
-Additional languages can be added by defining new architecture mappings.
+This separation keeps the implementation simple while allowing future architectural models to be added without changing the renderer or filesystem traversal.
 
 ---
 
 ## Installation
+
+Install locally during development:
 
 ```bash
 pip install .
@@ -155,12 +178,10 @@ Display a specific directory:
 archtree path/to/project
 ```
 
-Future versions will support additional options such as:
+Example:
 
 ```bash
-archtree --architecture cpp
-archtree --depth 2
-archtree --all
+archtree ../screens
 ```
 
 ---
@@ -170,6 +191,8 @@ archtree --all
 ```text
 src/
 └── archtree/
+    ├── __init__.py
+    ├── __main__.py
     ├── cli.py
     ├── roles.py
     ├── tree.py
@@ -183,31 +206,44 @@ src/
 Each module has a single responsibility.
 
 | Module | Responsibility |
-|---------|----------------|
+| :------ | :------------- |
 | `cli.py` | Command-line interface |
 | `roles.py` | Architectural role definitions |
-| `tree.py` | Filesystem traversal |
-| `renderer.py` | Tree rendering |
-| `sorting.py` | Architectural ordering |
-| `architectures.py` | Language-specific architecture definitions |
+| `tree.py` | Filesystem traversal and tree construction |
+| `renderer.py` | Unicode tree rendering |
+| `sorting.py` | Architecture-aware node ordering |
+| `architectures.py` | Architectural role classification |
 | `models.py` | Tree data structures |
-| `config.py` | Project configuration |
+| `config.py` | Configuration support |
 
 ---
 
 ## Roadmap
 
-Planned capabilities include:
+Future development is expected to include:
 
-- Multiple language architectures
+- Additional language architectures
 - Project-specific `.archtree` configuration
-- JSON output
-- Markdown output
-- Graphviz export
-- Git status integration
+- Component statistics
+- Theme support
+- Additional output formats (JSON, Markdown, Graphviz)
 - Colourised output
 - Architecture validation
-- Component statistics
+
+The architecture has been designed so these capabilities can be added without changing the overall processing pipeline.
+
+---
+
+## Design Principles
+
+The project is guided by a small set of engineering principles.
+
+- Architecture precedes implementation.
+- Components should be understood from the outside in.
+- Every module should have a single responsibility.
+- Good architecture should feel inevitable.
+
+These principles influence both the implementation of **archtree** and the way it presents software projects.
 
 ---
 
