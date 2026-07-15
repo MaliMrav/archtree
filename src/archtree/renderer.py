@@ -11,9 +11,25 @@ PIPE = "│   "
 SPACE = "    "
 
 
+def format_name(
+    node: Node,
+    label: str | None = None,
+) -> str:
+    """
+    Return the display name for a node.
+    """
+
+    name = label if label is not None else node.path.name
+
+    if node.path.is_dir():
+        return f"{name}/"
+
+    return name
+
+
 def render(
-        node: Node,
-        label: str,
+    node: Node,
+    label: str,
 ) -> list[str]:
     """
     Render a tree using unicode branches.
@@ -21,7 +37,7 @@ def render(
 
     lines: list[str] = []
 
-    lines.append(label)
+    lines.append(format_name(node, label))
 
     if node.children:
         lines.extend(
@@ -56,7 +72,7 @@ def _render_children(
         lines.append(
             prefix
             + connector
-            + child.path.name
+            + format_name(child)
         )
 
         if child.children:
